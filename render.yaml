@@ -1,0 +1,36 @@
+# Render Blueprint for the Subaz Open Thoughtz backend.
+# Push this repo to GitHub, then in Render: New -> Blueprint -> select this repo.
+# Render will read this file and provision the web service automatically.
+# You'll still need to set MONGO_URI (e.g. a MongoDB Atlas connection string)
+# and CLIENT_URL (your deployed frontend URL) in the Render dashboard.
+services:
+  - type: web
+    name: subaz-open-thoughtz-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_RESET_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_RESET_EXPIRES_IN
+        value: 15m
+      - key: MONGO_URI
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_USERNAME
+        value: admin
