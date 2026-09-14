@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: sot_mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: sot_backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      CLIENT_URL: http://localhost:3000
+      MONGO_URI: mongodb://mongo:27017/subaz_open_thoughtz
+      JWT_SECRET: ${JWT_SECRET:-change_this_to_a_long_random_secret_string}
+      JWT_EXPIRES_IN: 7d
+      JWT_RESET_SECRET: ${JWT_RESET_SECRET:-change_this_to_a_different_long_random_secret}
+      JWT_RESET_EXPIRES_IN: 15m
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@subazopenthoughtz.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe_Admin123!}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-"Subaz Open Thoughtz <no-reply@subazopenthoughtz.com>"}
+    ports:
+      - '5000:5000'
+    volumes:
+      - uploads_data:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: sot_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '3000:80'
+
+volumes:
+  mongo_data:
+  uploads_data:
