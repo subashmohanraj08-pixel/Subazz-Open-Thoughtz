@@ -60,9 +60,10 @@ jobs:
       - name: Build and push container image to registry
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
+          context: ./utils
+          file: ./utils/Dockerfile
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./Dockerfile
 
   deploy:
     permissions:
